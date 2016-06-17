@@ -80,5 +80,41 @@
       })
 
     </script>
+
+    <!-- connect to pusher -->
+    <script src="https://js.pusher.com/3.0/pusher.min.js"></script>
+    <script type="text/javascript">
+
+
+      function loadFromHash(){
+        var c = parseHash(document.location.hash)
+        if(!c) {return console.log("No Pusher configuration found")}
+
+        new Pusher(c.key, {cluster:c.cluster})
+         .subscribe(c.channel)
+         .bind(c.event, function(data) {
+           store(data[c.jsonKey])
+         })
+
+      }
+
+      function parseHash(hash){
+        if(!hash) return
+
+        var parts = hash.substr(1).split('/')
+
+        return {
+          cluster: parts[0],
+          key:     parts[1],
+          channel: parts[2],
+          event:   parts[3],
+          jsonKey: parts[4],
+        }
+      }
+
+      loadFromHash()
+
+    </script>
+
   </body>
 </html>
