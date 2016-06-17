@@ -1,0 +1,84 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8">
+    <title>text</title>
+    <link href="https://fonts.googleapis.com/css?family=Roboto+Mono:100i" rel="stylesheet">
+    <style media="screen">
+      body {
+        font-family: 'Roboto Mono', monospace;
+        margin:0;
+        background-color: #eee;
+        transition: 7s;
+      }
+      h1 {
+        font-weight: 100;
+        text-align: center;
+        line-height: 100vh;
+        font-size: 12vw;
+        vertical-align: middle;
+        margin:0;
+        transition: .1s
+      }
+    </style>
+  </head>
+  <body>
+    <h1 id="data"></h1>
+
+    <script type="text/javascript">
+      var textElement = document.getElementById('data')
+      var testElement = document.createElement('div')
+
+
+      // this can be implemented in a more efficient way (with fewer timers)
+      // but just trying out the ui at the moment
+      function timestore(timeout, callback) {
+        var data = []
+        return function (item) {
+          data.push(item)
+          notify()
+          setTimeout(function(){
+            data.shift()
+            notify()
+          }, timeout)
+        }
+        function notify(){
+          callback && callback(data.slice(0))
+        }
+      }
+
+
+      // check if a colour is a colour to see if setting it to an element
+      // makes any difference
+      function isColor(c) {
+        var style = testElement.style
+
+        style.backgroundColor = 'tan'
+        style.color = 'red'
+
+        style.backgroundColor = c
+        style.color = c
+
+        return c &&  style.backgroundColor == style.color
+      }
+
+
+      // use the store to keep letters typed
+      var store = timestore(5000, function(data){
+        var text = data.join('')
+        textElement.innerText = text
+        textElement.style.fontSize = 100 / text.length + 'vw'
+
+        if(isColor(text)) {
+          document.body.style.backgroundColor = text
+        }
+      })
+
+
+      window.addEventListener('keyup', function(e) {
+        if(e.key.length === 1) store(e.key)
+      })
+
+    </script>
+  </body>
+</html>
